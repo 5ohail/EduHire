@@ -1,4 +1,5 @@
 import { FaPlus } from 'react-icons/fa'
+import { useNavigate } from 'react-router-dom';
 const StudentDashboard = () => {
   // Mock data for the component
   const recommendedInternships = [
@@ -72,17 +73,19 @@ const StudentDashboard = () => {
       message: 'Prof. Smith has approved your application for \'Tech Solutions Inc\'.',
     },
   ];
-
+  const navigate = useNavigate();
   return (
     <div className="p-8 bg-gray-50 min-h-screen font-sans">
       
       {/* Quick Actions */}
       <h2 className="text-xl font-semibold text-gray-800 mb-4">Quick Actions</h2>
       <div className="flex space-x-4 mb-10">
-        <button className="flex items-center px-4 py-2 bg-blue-600 text-white font-medium rounded-lg shadow-md hover:bg-blue-700 transition-colors">
+        <button className="flex items-center px-4 py-2 bg-blue-600 text-white font-medium rounded-lg shadow-md hover:bg-blue-700 transition-colors"
+        onClick={() => navigate('/internships')}>
           <span className="mr-2"><div className='border-white border-2 p-1 rounded-full'><FaPlus size={10} /></div></span> Apply to Internships
         </button>
-        <button className="cursor-pointer flex items-center px-4 py-2 border border-gray-300 text-gray-700 font-medium rounded-lg bg-white hover:bg-gray-100 transition-colors">
+        <button className="cursor-pointer flex items-center px-4 py-2 border border-gray-300 text-gray-700 font-medium rounded-lg bg-white hover:bg-gray-100 transition-colors"
+        onClick={() => navigate('/settings')}>
           <span className="mr-2">✏️</span> Update Profile
         </button>
       </div>

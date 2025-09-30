@@ -1,6 +1,8 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 const IntershipDetails = () => {
+    const Navigate = useNavigate();
   const skills = [
     "JavaScript", "Python", "React", "Node.js", "CSS", "HTML",
     "Django", "Flask", "C++", "Java",
@@ -185,7 +187,8 @@ const IntershipDetails = () => {
 
       {/* Final Button */}
       <div className="flex justify-center mt-10">
-        <button className="bg-blue-500 text-white font-medium px-8 py-3 rounded-full hover:bg-blue-600 transition-all">
+        <button className="bg-blue-500 text-white font-medium px-8 py-3 rounded-full hover:bg-blue-600 transition-all"
+        onClick={()=>Navigate("/filtered-internships")}>
           Find My Internship
         </button>
       </div>
