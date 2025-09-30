@@ -1,9 +1,9 @@
 import Login from "../components/Login.tsx";
 // import { signInWithGoogle, signInWithFacebook } from "../firebase/firebaseConfig.js";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, /*useNavigate*/ } from "react-router-dom";
 
 const Authentication = () => {
-  const navigate = useNavigate();
+  // const navigate = useNavigate();
 
   const handleGoogleLogin = async () => {
     // try {

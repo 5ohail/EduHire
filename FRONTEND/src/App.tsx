@@ -4,6 +4,8 @@ import Dashboard from "./pages/Dashboard";
 import Authentication from "./pages/Authentication";
 import ProtectedRoute from "./components/ProtectedRoutes";
 import Internship from "./pages/Internship";
+import Applications from "./pages/Applications";
+import Profile from "./pages/Profile";
 
 const App = () => {
   const isAuthenticated = true; // TODO: replace with real auth logic (context, localStorage, API)
@@ -24,6 +26,8 @@ const App = () => {
           }
         />
         <Route path="/internships" element={<Internship />} />
+        <Route path="/applications" element={<Applications />} />
+        <Route path="/profile" element={<Profile />} />
       </Routes>
     </div>
   );
