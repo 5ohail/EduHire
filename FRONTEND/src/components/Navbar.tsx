@@ -2,7 +2,9 @@
 import { useContext } from "react";
 import { FaBell } from "react-icons/fa";
 import { MyContext } from "../context/context";
+import { useNavigate } from "react-router-dom";
 const Navbar = () => {
+  const navigate = useNavigate();
   const context = useContext(MyContext);
     if (!context) {
     throw new Error("Navbar must be used within a MyContextProvider");
@@ -14,7 +16,7 @@ const Navbar = () => {
       <h2 className="text-xl font-semibold">{designation === "placement cell" ? "Dashboard" : 
         (designation === "mentor" ? "Faculty Mentor Dashboard" : "Welcome, User👋")}</h2>
       <div className="flex items-center gap-4">
-        <button className="relative">
+        <button className="relative cursor-pointer" onClick={() => navigate('/notifications')}>
           <FaBell size={20} />
           <span className="absolute -top-1 -right-1 w-2 h-2 bg-red-500 rounded-full"></span>
         </button>

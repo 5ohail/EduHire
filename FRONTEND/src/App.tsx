@@ -15,6 +15,7 @@ import Calendar from "./pages/Calendar";
 import PlacementAnalyticBoard from "./pages/PlacementAnalyticBoard";
 import PlacementFeedbackManager from "./pages/Feedback";
 import Students from "./pages/Students";
+import NotFoundPage from "./pages/NotFound";
 const App = () => {
   const isAuthenticated = true; // TODO: replace with real auth logic (context, localStorage, API)
 
@@ -46,7 +47,7 @@ const App = () => {
         <Route path="analytics" element={<PlacementAnalyticBoard />} />
         <Route path="feedback" element={<PlacementFeedbackManager />} />
         <Route path="students" element={<Students />} />
-        <Route path="*" element={<div>404 Not Found</div>} />
+        <Route path="*" element={<NotFoundPage />} />
       </Routes>
     </div>
   );
