@@ -36,7 +36,7 @@ const Authentication = () => {
               alt="logo"
             />
             <h1 className="font-semibold text-xl md:text-2xl text-blue-600 md:-translate-x-28">
-              CampusConnect
+              EduHire
             </h1>
           </div>
 

@@ -6,7 +6,7 @@ import Layout from "./pages/Layout.tsx";
 import { MyContextProvider } from "./context/context.tsx";
 
 const RootWrapper = () => {
-  const [designation, setDesignation] = useState("mentor"); // "student", "placement cell", "mentor"
+  const [designation, setDesignation] = useState("recruiter"); // "student", "placement cell", "mentor"
   const location = useLocation();
 
   return (
