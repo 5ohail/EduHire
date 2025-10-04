@@ -16,6 +16,9 @@ import PlacementAnalyticBoard from "./pages/PlacementAnalyticBoard";
 import PlacementFeedbackManager from "./pages/Feedback";
 import Students from "./pages/Students";
 import NotFoundPage from "./pages/NotFound";
+import StudentDirectoryPage from "./pages/StudentDirectoryPage";
+import StudentDetailPage from "./pages/StudentDetailPage";
+import MentorActionsPage from "./pages/MentorActionPage";
 const App = () => {
   const isAuthenticated = true; // TODO: replace with real auth logic (context, localStorage, API)
 
@@ -47,6 +50,9 @@ const App = () => {
         <Route path="analytics" element={<PlacementAnalyticBoard />} />
         <Route path="feedback" element={<PlacementFeedbackManager />} />
         <Route path="students" element={<Students />} />
+        <Route path="student-directory" element={<StudentDirectoryPage />} />
+        <Route path="student-directory/:id" element={<StudentDetailPage />} />
+        <Route path="mentor/action/:id" element={<MentorActionsPage />} />
         <Route path="*" element={<NotFoundPage />} />
       </Routes>
     </div>

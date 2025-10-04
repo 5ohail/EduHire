@@ -4,25 +4,33 @@ interface card{
     types: string;
     title: string;
     content: string;
+    btnTitle: string;
+    nav : string;
 }
 const cardInformation:card[] = [
     {
     img:"/mentor[1].png",
     types:"Applications",
     title:"Approve Student Application",
-    content: "Review and approve student applications for internships and placements."
+    content: "Review and approve student applications for internships and placements.",
+    btnTitle: "Review Applications"
+    ,nav:"/applications"
     },
     {
     img:"/mentor[2].png",
     types:"Feedback",
     title:"Log Internship Feedback",
-    content: "Provide feedback on student performance during internships."
+    content: "Provide feedback on student performance during internships.",
+    btnTitle: "Submit Feedback"
+    ,nav:"/feedback"
     },
     {
     img:"/mentor[3].png",
     types:"Students",
     title:"Access Student Profiles",
-    content: "Quickly access student profiles and academic information"
+    content: "Quickly access student profiles and academic information",
+    btnTitle: "View Students"
+    ,nav:"/student-directory"
 }
 ]
 function MentorDashboard() {
@@ -35,7 +43,7 @@ function MentorDashboard() {
     <div className="flex flex-wrap justify-center">
         {cardInformation.map((card, index) => (
         <div key={index} className="mt-8 mx-12">
-            <Card img={card.img} types={card.types} title={card.title} content={card.content}/>
+            <Card img={card.img} types={card.types} title={card.title} content={card.content} btnTitle={card.btnTitle} nav={card.nav}/>
         </div>
     ))}
     </div>
