@@ -1,4 +1,5 @@
 import React from 'react';
+import { useNavigate } from 'react-router-dom';
 
 // --- Interface for Props ---
 interface SkillBadgeProps {
@@ -52,6 +53,7 @@ const navigateToLogSection = (jobId: number, jobTitle: string) => {
 
 // --- Main Profile Component ---
 const StudentProfile: React.FC = () => {
+  const navigate = useNavigate();
   // Mock Data
   const profileData = {
     name: 'Rohan Patel',
@@ -127,7 +129,7 @@ const StudentProfile: React.FC = () => {
                   <div 
                     key={job.id} 
                     className="p-3 border border-blue-200 bg-blue-50 rounded-lg flex justify-between items-center cursor-pointer hover:bg-blue-100 transition"
-                    onClick={() => navigateToLogSection(job.id, job.title)}
+                    onClick={() => navigate('/logs')}
                   >
                     <div>
                       <h4 className="text-base font-semibold text-blue-800">{job.title}</h4>

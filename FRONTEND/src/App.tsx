@@ -10,7 +10,11 @@ import LogManagement from "./pages/LogManagement";
 import Settings from "./pages/Settings";
 import FilteredInternshipsList from "./pages/FilteredInternshipsList";
 import ListedInternshipDetails from "./pages/ListedInternshipDetails";
-
+import PlacementCellOpening from "./pages/PlacementCellOpening";
+import Calendar from "./pages/Calendar";
+import PlacementAnalyticBoard from "./pages/PlacementAnalyticBoard";
+import PlacementFeedbackManager from "./pages/Feedback";
+import Students from "./pages/Students";
 const App = () => {
   const isAuthenticated = true; // TODO: replace with real auth logic (context, localStorage, API)
 
@@ -36,6 +40,12 @@ const App = () => {
         <Route path="/settings" element={<Settings />} />
         <Route path="/filtered-internships" element={<FilteredInternshipsList />} />
         <Route path="/view" element={<ListedInternshipDetails />} />
+        <Route path="openings" element={<PlacementCellOpening />} />
+        <Route path="applications/:id" element={<Applications />} />
+        <Route path="calendar" element={<Calendar />} />
+        <Route path="analytics" element={<PlacementAnalyticBoard />} />
+        <Route path="feedback" element={<PlacementFeedbackManager />} />
+        <Route path="students" element={<Students />} />
         <Route path="*" element={<div>404 Not Found</div>} />
       </Routes>
     </div>
