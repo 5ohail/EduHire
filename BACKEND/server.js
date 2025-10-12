@@ -13,6 +13,7 @@ const connectDB = require('./db/db');
 // These files contain the logic that maps URLs to Controller functions
 const authRoutes = require('./routes/authRoutes');
 const jobRoutes = require('./routes/jobRoutes');
+const applicationRoutes = require('./routes/applicationRoutes');
 
 // Load environment variables from .env file
 dotenv.config();
@@ -40,6 +41,7 @@ app.get('/', (req, res) => {
 app.use('/api/auth', authRoutes);
 // Base URL for Jobs: /api/jobs
 app.use('/api/jobs', jobRoutes);
+app.use('/api/applications', applicationRoutes);
 
 // --- Error Handling Middleware (optional but highly recommended for production) ---
 const notFound = (req, res, next) => {

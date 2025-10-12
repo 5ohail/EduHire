@@ -40,7 +40,7 @@ const Sidebar = () => {
   const menuToRender =
     designation === "placement cell"
       ? PlacementmenuItems
-      : designation === "student"
+      : designation === "Student"
       ? StudentmenuItems
       : MentorMenuItems;
 

@@ -1,6 +1,6 @@
 import { useContext } from "react"
 import { MyContext } from "../context/context"
-import RecruiterFeedback from "../components/RecruiterFeedBack";
+import RecruiterFeedback from "../components/RecruiterFeedback";
 import MentorFeedback from "../components/MentorFeedback";
 function Feedback() {
     const context = useContext(MyContext)

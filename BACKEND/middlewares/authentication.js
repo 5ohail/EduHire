@@ -3,7 +3,7 @@
 const jsonwebtoken = require('jsonwebtoken');
 
 // Load JWT_SECRET from environment variables (conceptual)
-const JWT_SECRET = process.env.JWT_SECRET || 'YOUR_SUPER_SECRET_KEY';
+// const JWT_SECRET = process.env.JWT_SECRET;
 
 /**
  * @function generateToken
@@ -13,7 +13,7 @@ const JWT_SECRET = process.env.JWT_SECRET || 'YOUR_SUPER_SECRET_KEY';
  * @returns {string} The signed JWT.
  */
 const generateToken = (id, role) => {
-    return jsonwebtoken.sign({ id, role }, JWT_SECRET, { expiresIn: '30d' });
+    return jsonwebtoken.sign({ id, role }, process.env.JWT_SECRET, { expiresIn: '30d' });
 };
 
 /**

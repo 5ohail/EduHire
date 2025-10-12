@@ -1,5 +1,6 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useMyContext } from '../context/context';
 
 // --- Interface for Props ---
 interface SkillBadgeProps {
@@ -54,15 +55,84 @@ const navigateToLogSection = (jobId: number, jobTitle: string) => {
 // --- Main Profile Component ---
 const StudentProfile: React.FC = () => {
   const navigate = useNavigate();
-  // Mock Data
-  const profileData = {
-    name: 'Rohan Patel',
-    title: 'Final Year Computer Science Student specializing in AI/ML.',
-    college: 'Mumbai Technical University',
-    email: 'rohan.patel@email.com',
-    phone: '98765 43210',
-    skills: ['Python', 'AWS', 'SolidWorks', 'TensorFlow', 'SQL'],
+  const ctx = useMyContext();
+
+  type ProfileData = {
+    name: string;
+    title: string;
+    college: string;
+    email: string;
+    phone: string;
+    skills: string[];
   };
+
+  const [profileData, setProfileData] = useState<ProfileData | null>(null);
+  const [loading, setLoading] = useState<boolean>(true);
+  const [error, setError] = useState<string | null>(null);
+  const [isEditing, setIsEditing] = useState<boolean>(false);
+  const [draft, setDraft] = useState<ProfileData | null>(null);
+  const [draftSkillsText, setDraftSkillsText] = useState<string>('');
+
+  useEffect(() => {
+    let ignore = false;
+    const load = async () => {
+      try {
+        const token = localStorage.getItem('token');
+        if (token) {
+          const res = await fetch('/api/auth/me', {
+            headers: { Authorization: `Bearer ${token}` },
+          });
+          if (res.status === 401) {
+            // Unauthorized: fall back to context without erroring
+            try { localStorage.removeItem('token'); } catch {}
+            if (!ignore) {
+              setProfileData({
+                name: ctx.user || 'User',
+                title: 'Student',
+                college: '—',
+                email: ctx.email || '—',
+                phone: '—',
+                skills: ['Teamwork'],
+              });
+              setError('Session expired. Please log in again.');
+            }
+            return;
+          }
+          if (!res.ok) throw new Error('Failed to fetch profile');
+          const json = await res.json();
+          const user = json?.data;
+          if (!ignore && user) {
+            setProfileData({
+              name: user.name || ctx.user || 'User',
+              title: user.title || 'Student',
+              college: user.college || '—',
+              email: user.email || ctx.email || '—',
+              phone: user.phone || '—',
+              skills: Array.isArray(user.skills) && user.skills.length ? user.skills : ['Teamwork'],
+            });
+          }
+        } else {
+          // Fallback to context if no token
+          if (!ignore) {
+            setProfileData({
+              name: ctx.user || 'User',
+              title: 'Student',
+              college: '—',
+              email: ctx.email || '—',
+              phone: '—',
+              skills: ['Teamwork'],
+            });
+          }
+        }
+      } catch (e: any) {
+        if (!ignore) setError(e?.message || 'Failed to load profile');
+      } finally {
+        if (!ignore) setLoading(false);
+      }
+    };
+    load();
+    return () => { ignore = true; };
+  }, [ctx.user, ctx.email]);
 
   const jobHistory: JobExperience[] = [
     { id: 101, title: 'AI Research Intern', company: 'InnovateX Solutions', status: 'Current', dates: 'Sept 2025 - Present' },
@@ -74,6 +144,30 @@ const StudentProfile: React.FC = () => {
   const currentJobs = jobHistory.filter(job => job.status === 'Current');
   const pastJobs = jobHistory.filter(job => job.status === 'Past');
 
+  if (loading) {
+    return (
+      <div className="p-5 max-w-full mx-auto bg-gray-50">
+        <div className="text-gray-600">Loading profile...</div>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="p-5 max-w-full mx-auto bg-gray-50">
+        <div className="text-red-600">{error}</div>
+      </div>
+    );
+  }
+
+  if (!profileData) {
+    return (
+      <div className="p-5 max-w-full mx-auto bg-gray-50">
+        <div className="text-gray-600">No profile data.</div>
+      </div>
+    );
+  }
+
   return (
     <div className="p-5 max-w-full mx-auto bg-gray-50">
       {/* Outer Grid: Main Content + Right Sidebar */}
@@ -84,18 +178,73 @@ const StudentProfile: React.FC = () => {
           
           {/* 1. Header & Bio Card (Full Width) */}
           <div className="sm:col-span-2">
-            <ProfileCard className="p-6">
+          <ProfileCard className="p-6">
               <div className="flex items-center space-x-5">
                 <img
                   src="https://images.unsplash.com/photo-1668262738169-cce042b2b19c?w=600&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8M3x8Um9oYW4lMjBQYXRlbHxlbnwwfHwwfHx8MA%3D%3D" 
                   alt="Rohan Patel"
                   className="w-24 h-24 rounded-lg object-cover shadow-md"
                 />
-                <div>
-                  <h2 className="text-2xl font-bold mb-1 text-gray-900">{profileData.name}</h2>
-                  <p className="text-md font-medium text-gray-600 mb-2">{profileData.title}</p>
-                  <p className="text-sm text-gray-500">{profileData.college}</p>
-                  <p className="text-sm text-gray-500">Email: {profileData.email}</p>
+                <div className="flex-1">
+                  {isEditing ? (
+                    <div className="space-y-2">
+                      <input className="w-full p-2 border rounded" value={draft?.name || ''} onChange={e => setDraft(prev => ({ ...(prev || profileData), name: e.target.value }))} placeholder="Name" />
+                      <input className="w-full p-2 border rounded" value={draft?.title || ''} onChange={e => setDraft(prev => ({ ...(prev || profileData), title: e.target.value }))} placeholder="Title" />
+                      <input className="w-full p-2 border rounded" value={draft?.college || ''} onChange={e => setDraft(prev => ({ ...(prev || profileData), college: e.target.value }))} placeholder="College" />
+                      <input className="w-full p-2 border rounded" value={draft?.phone || ''} onChange={e => setDraft(prev => ({ ...(prev || profileData), phone: e.target.value }))} placeholder="Phone" />
+                      <input className="w-full p-2 border rounded" value={draftSkillsText} onChange={e => setDraftSkillsText(e.target.value)} placeholder="Skills (comma-separated)" />
+                    </div>
+                  ) : (
+                    <>
+                      <h2 className="text-2xl font-bold mb-1 text-gray-900">{profileData.name}</h2>
+                      <p className="text-md font-medium text-gray-600 mb-2">{profileData.title}</p>
+                      <p className="text-sm text-gray-500">{profileData.college}</p>
+                      <p className="text-sm text-gray-500">Email: {profileData.email}</p>
+                      <p className="text-sm text-gray-500">Phone: {profileData.phone}</p>
+                    </>
+                  )}
+                </div>
+                <div className="self-start">
+                  {isEditing ? (
+                    <button className="px-3 py-2 bg-green-600 text-white rounded" onClick={async () => {
+                      if (!draft) return;
+                      try {
+                        const token = localStorage.getItem('token');
+                        const skillsArray = draftSkillsText.split(',').map(s => s.trim()).filter(Boolean);
+                        const res = await fetch('/api/auth/me', {
+                          method: 'PUT',
+                          headers: { 'Content-Type': 'application/json', ...(token ? { Authorization: `Bearer ${token}` } : {}) },
+                          body: JSON.stringify({
+                            name: draft.name,
+                            title: draft.title,
+                            college: draft.college,
+                            phone: draft.phone,
+                            skills: skillsArray,
+                          }),
+                        });
+                        if (res.status === 401) {
+                          try { localStorage.removeItem('token'); } catch {}
+                          throw new Error('Unauthorized');
+                        }
+                        if (!res.ok) throw new Error('Failed to save');
+                        const json = await res.json();
+                        const user = json?.data;
+                        setProfileData({
+                          name: user.name,
+                          title: user.title || 'Student',
+                          college: user.college || '—',
+                          email: user.email || profileData.email,
+                          phone: user.phone || '—',
+                          skills: Array.isArray(user.skills) ? user.skills : skillsArray,
+                        });
+                        setIsEditing(false);
+                      } catch (e) {
+                        alert('Failed to save profile. Please log in again.');
+                      }
+                    }}>Save</button>
+                  ) : (
+                    <button className="px-3 py-2 bg-blue-600 text-white rounded" onClick={() => { setDraft(profileData); setDraftSkillsText((profileData.skills || []).join(', ')); setIsEditing(true); }}>Edit</button>
+                  )}
                 </div>
               </div>
             </ProfileCard>

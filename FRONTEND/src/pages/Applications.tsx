@@ -14,7 +14,7 @@ function Applications() {
   return (
     <div>
       {designation == "placement cell" && <PlacementCellApplications />}
-      {designation == "student" && <StudentApplications />}
+      {designation == "Student" && <StudentApplications />}
       {designation == "mentor" && <MentorApplications />}
       {designation == "recruiter" && <RecruiterApplicant />}
     </div>

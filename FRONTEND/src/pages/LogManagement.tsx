@@ -17,7 +17,8 @@ interface Task {
 }
 
 interface LogEntry {
-  id: number;
+  id: number; // local unique key for React lists
+  backendId?: string; // persisted id from API
   time: string; // "Xh Ym" for display
   description: string;
   type: 'Work' | 'Meeting' | 'Research' | 'Review';
@@ -281,13 +282,7 @@ const LogManagement: React.FC = () => {
         { id: 12, title: 'Team retrospective meeting', status: 'Done', timeLoggedHours: 3.25, isTimerRunning: false },
     ]);
 
-    const [logs, setLogs] = useState<LogEntry[]>([
-        { id: 1, time: '2h', description: 'Work on model training', type: 'Work' },
-        { id: 2, time: '1h', description: 'Daily standup', type: 'Meeting' },
-        { id: 3, time: '3h', description: 'Research on data augmentation', type: 'Research' },
-        { id: 4, time: '0.5h', description: 'Code review', type: 'Review' },
-        { id: 5, time: '2h', description: 'Bug fixing', type: 'Work' },
-    ]); 
+    const [logs, setLogs] = useState<LogEntry[]>([]);
 
     const [formState, setFormState] = useState({
         timeSpent: '',
@@ -337,7 +332,7 @@ const LogManagement: React.FC = () => {
         setFormState(prev => ({ ...prev, [name]: value }));
     };
 
-    const handleSubmitLog = (e: React.FormEvent) => {
+    const handleSubmitLog = async (e: React.FormEvent) => {
         e.preventDefault();
         const timeSpent = formState.timeSpent.trim();
         if (!timeSpent.match(/^\d+(\.\d+)?h$/)) {
@@ -345,19 +340,50 @@ const LogManagement: React.FC = () => {
             return;
         }
 
-        setLogs(prev => [{ 
-            id: Date.now(), 
-            time: timeSpent, 
-            description: formState.comments || formState.taskTicket || 'No comment/task provided',
-            type: formState.logType as LogEntry['type'],
-        }, ...prev]);
+        const timeMatch = timeSpent.match(/(\d+\.?\d*)h/);
+        const hours = timeMatch ? parseFloat(timeMatch[1]) : 0;
 
-        setFormState({ timeSpent: '', logType: 'Work', taskTicket: '', comments: '' });
+        try {
+            const token = localStorage.getItem('token');
+            const res = await fetch('/api/logs', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json', ...(token ? { Authorization: `Bearer ${token}` } : {}) },
+                body: JSON.stringify({
+                    timeSpentHours: hours,
+                    type: formState.logType,
+                    taskTicket: formState.taskTicket || undefined,
+                    comment: formState.comments || undefined,
+                }),
+            });
+            if (!res.ok) throw new Error('Failed to create log');
+            const created = await res.json();
+            setLogs(prev => [{
+                id: Date.now(),
+                backendId: created._id,
+                time: `${hours}h`,
+                description: created.comment || created.taskTicket || 'No comment/task provided',
+                type: created.type,
+            }, ...prev]);
+            setFormState({ timeSpent: '', logType: 'Work', taskTicket: '', comments: '' });
+        } catch (err) {
+            alert('Failed to create log. Please try again.');
+        }
     };
 
-    const handleRemoveLog = useCallback((id: number) => {
-        setLogs(prev => prev.filter(log => log.id !== id));
-    }, []);
+    const handleRemoveLog = useCallback(async (id: number) => {
+        let backendId: string | undefined;
+        const target = logs.find(l => l.id === id);
+        backendId = target?.backendId;
+        if (!backendId) return;
+        try {
+            const token = localStorage.getItem('token');
+            const res = await fetch(`/api/logs/${backendId}`, { method: 'DELETE', headers: { ...(token ? { Authorization: `Bearer ${token}` } : {}) } });
+            if (!res.ok) throw new Error('failed');
+            setLogs(prev => prev.filter(log => log.id !== id));
+        } catch {
+            alert('Failed to delete log.');
+        }
+    }, [logs]);
 
     const handleDayClick = (day: number) => {
         setSelectedDate(day === selectedDate ? null : day);
@@ -461,6 +487,32 @@ const LogManagement: React.FC = () => {
     const progressPercent = Math.min((totalHoursThisWeek / weeklyGoal) * 100, 100);
     const hoursPart = Math.floor(totalHoursThisWeek);
     const minutesPart = Math.round((totalHoursThisWeek - hoursPart) * 60);
+
+    useEffect(() => {
+        let ignore = false;
+        const load = async () => {
+            try {
+                const token = localStorage.getItem('token');
+                const res = await fetch('/api/logs', { headers: { ...(token ? { Authorization: `Bearer ${token}` } : {}) } });
+                if (!res.ok) throw new Error('failed');
+                const data = await res.json();
+                if (ignore) return;
+                const mapped: LogEntry[] = data.map((d: any) => ({
+                    id: Date.now() + Math.random(),
+                    backendId: d._id,
+                    time: `${d.timeSpentHours ?? 0}h`,
+                    description: d.comment || d.taskTicket || 'No comment/task provided',
+                    type: d.type,
+                }));
+                setLogs(mapped);
+            } catch {
+                if (ignore) return;
+                setLogs([]);
+            }
+        };
+        load();
+        return () => { ignore = true; };
+    }, []);
 
     return (
         <div className="p-5 max-w-full mx-auto bg-gray-50 font-sans">

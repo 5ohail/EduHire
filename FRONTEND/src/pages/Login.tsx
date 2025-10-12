@@ -1,9 +1,8 @@
 import Login from "../components/Login.tsx";
 // import { signInWithGoogle, signInWithFacebook } from "../firebase/firebaseConfig.js";
-import { Link, /*useNavigate*/ } from "react-router-dom";
+import { Link } from "react-router-dom";
 
 const Authentication = () => {
-  // const navigate = useNavigate();
 
   const handleGoogleLogin = async () => {
     // try {
@@ -85,7 +84,7 @@ const Authentication = () => {
 
           {/* Email Login */}
           <div className="w-full">
-            <Login />
+            <Login/>
           </div>
 
           {/* Register Link */}

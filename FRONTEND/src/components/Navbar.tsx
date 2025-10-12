@@ -9,12 +9,12 @@ const Navbar = () => {
     if (!context) {
     throw new Error("Navbar must be used within a MyContextProvider");
   }
-  const { designation } = context;
+  const { designation,user } = context;
   return (
     <>
     <div className="flex justify-between items-center p-4 bg-white shadow-sm">
       <h2 className="text-xl font-semibold">{designation === "placement cell" ? "Dashboard" : 
-        (designation === "mentor" ? "Faculty Mentor Dashboard" : "Welcome, User👋")}</h2>
+        (designation === "mentor" ? "Faculty Mentor Dashboard" : `Welcome, ${user}👋`)}</h2>
       <div className="flex items-center gap-4">
         <button className="relative cursor-pointer" onClick={() => navigate('/notifications')}>
           <FaBell size={20} />

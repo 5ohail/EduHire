@@ -1,0 +1,19 @@
+Backend changes summary
+
+- Added package.json with TypeScript, Express, Mongoose, JWT, CORS; dev scripts and Jest setup
+- Added tsconfig.json for compiling src -> dist
+- Created src/server.ts (Express app, JSON/CORS, health route, error handler, DB connect, mounts routers)
+- Config: src/config/db.ts (MongoDB connection)
+- Utils: src/utils/jwt.ts (sign/verify JWT)
+- Types: src/types/express.d.ts (Request.user typing)
+- Middlewares: src/middleware/authMiddleware.ts (JWT auth, RBAC), src/middleware/errorHandler.ts (standard errors)
+- Models: src/models/User.ts, src/models/JobPosting.ts, src/models/Application.ts
+- Controllers: src/controllers/authController.ts, src/controllers/jobController.ts, src/controllers/applicationController.ts
+- Routes: src/routes/authRoutes.ts, src/routes/jobRoutes.ts, src/routes/applicationRoutes.ts
+  - Auth: POST /api/auth/register, POST /api/auth/login, GET /api/auth/me
+  - Jobs: GET /api/jobs (public), POST /api/jobs, PATCH /api/jobs/:id/status
+  - Applications: POST /api/applications/applied, GET /api/applications/analytics
+- Jest: jest.config.ts; test dependencies added to devDependencies
+
+Environment variables required (.env): PORT, MONGODB_URI, JWT_SECRET
+

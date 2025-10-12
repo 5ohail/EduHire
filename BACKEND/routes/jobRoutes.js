@@ -8,12 +8,12 @@ const router = express.Router();
 
 router.route('/')
     .get(getJobs) // Public read access
-    .post(protect, restrictTo('employer'), createJob); // Protected write access for employers
+    .post(protect, restrictTo('recruiter'), createJob); // Protected write access for recruiters
 
 // Example of a route to get, update, or delete a single job:
 // router.route('/:id')
 //     .get(getJobById)
-//     .put(protect, restrictTo('employer'), updateJob)
-//     .delete(protect, restrictTo('employer'), deleteJob);
+//     .put(protect, restrictTo('recruiter'), updateJob)
+//     .delete(protect, restrictTo('recruiter'), deleteJob);
 
 module.exports = router;

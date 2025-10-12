@@ -6,9 +6,10 @@ const bcrypt = require('bcryptjs');
 const UserSchema = new mongoose.Schema({
     email: { type: String, required: true, unique: true },
     password: { type: String, required: true },
-    role: { type: String, enum: ['student', 'employer'], required: true }, // Key for authorization
+    role: { type: String, enum: ['student', 'placement cell', 'mentor' , 'recruiter'], default: 'student' }, // Key for authorization
     name: { type: String, required: true },
     profileData: { type: Object, default: {} }, // Stores student/employer specific details
+    applied: {type: [Object], default: []},
     dateJoined: { type: Date, default: Date.now }
 });
 

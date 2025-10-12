@@ -26,7 +26,7 @@ const students = [
     <>
       {(designation == "placement cell") && ( <PlacementDashboard students={students} cards={cards} /> )}
       {(designation == "mentor") && ( <MentorDashboard /> )}
-      {(designation == "student") && ( <StudentDashboard /> )}
+      {(designation == "Student") && ( <StudentDashboard /> )}
       {(designation == "recruiter") && ( <RecruiterDashboard /> )}
     </>
   );
